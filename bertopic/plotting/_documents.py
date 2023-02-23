@@ -5,6 +5,9 @@ import plotly.graph_objects as go
 from umap import UMAP
 from typing import List
 
+# should be downloaded python-bidi , arabic-reshaper
+from bidi.algorithm import get_display
+import arabic_reshaper
 
 def visualize_documents(topic_model,
                         docs: List[str],
@@ -171,7 +174,9 @@ def visualize_documents(topic_model,
             selection["text"] = ""
 
             if not hide_annotations:
-                selection.loc[len(selection), :] = [None, None, selection.x.mean(), selection.y.mean(), name]
+                reshaped_text = arabic_reshaper.reshape(name)
+                new_name = get_display(reshaped_text)
+                selection.loc[len(selection), :] = [None, None, selection.x.mean(), selection.y.mean(), new_name]
 
             fig.add_trace(
                 go.Scattergl(
